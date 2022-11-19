@@ -6,6 +6,12 @@ public class PlayerController : MonoBehaviour
 {
     private CharacterController _controller;
 
+    [SerializeField] private bool _isGrounded;
+
+    [Header("Player Stats")]
+    [SerializeField] private float _moveSpeed = 5.0f;
+    [SerializeField] private float _gravity = 9.81f;
+
     void Start()
     {
         _controller = GetComponent<CharacterController>();
@@ -21,7 +27,13 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
 
         Vector3 direction = new Vector3(horizontalInput, 0, 0);
+        Vector3 velocity = direction * _moveSpeed;
 
-        _controller.Move(direction * Time.deltaTime);
+        if(_controller.isGrounded == false)
+        {
+            velocity.y -= _gravity;
+        }
+
+        _controller.Move(velocity * Time.deltaTime);
     }
 }
