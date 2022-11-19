@@ -6,11 +6,12 @@ public class PlayerController : MonoBehaviour
 {
     private CharacterController _controller;
 
-    [SerializeField] private bool _isGrounded;
+    [SerializeField] private float _yVelocity = 0.0f;
 
     [Header("Player Stats")]
     [SerializeField] private float _moveSpeed = 5.0f;
-    [SerializeField] private float _gravity = 9.81f;
+    [SerializeField] private float _gravity = 1.0f;
+    [SerializeField] private float _jumpHeight = 15.0f;
 
     void Start()
     {
@@ -19,6 +20,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        
+    }
+
+    private void FixedUpdate()
+    {
         PlayerMovement();
     }
 
@@ -26,14 +32,26 @@ public class PlayerController : MonoBehaviour
     {
         float horizontalInput = Input.GetAxis("Horizontal");
 
-        Vector3 direction = new Vector3(horizontalInput, 0, 0);
+        Vector3 direction = new Vector3(horizontalInput, 0);
         Vector3 velocity = direction * _moveSpeed;
 
-        if(_controller.isGrounded == false)
+        if(_controller.isGrounded == true)
         {
-            velocity.y -= _gravity;
+            if(Input.GetKey(KeyCode.Space))
+            {
+                _yVelocity = _jumpHeight;
+            }
+            else
+            {
+                _yVelocity = 0;
+            }
+        }
+        else
+        {
+            _yVelocity -= _gravity;
         }
 
+        velocity.y = _yVelocity;
         _controller.Move(velocity * Time.deltaTime);
     }
 }
